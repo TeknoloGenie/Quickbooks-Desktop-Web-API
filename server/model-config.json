@@ -34,6 +34,6 @@
   },
   "QuickBooks": {
     "dataSource": "quickbooksService",
-    "public": false
+    "public": true
   }
 }

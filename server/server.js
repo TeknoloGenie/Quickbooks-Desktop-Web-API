@@ -1,7 +1,11 @@
 var loopback = require('loopback');
 var boot = require('loopback-boot');
+var LoopBackContext = require('loopback-context');
 
 var app = module.exports = loopback();
+
+app.use(LoopBackContext.perRequest());
+app.use(loopback.token());
 
 app.start = function() {
   // start the web server
