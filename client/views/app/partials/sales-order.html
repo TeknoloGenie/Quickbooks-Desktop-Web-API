@@ -1,0 +1,48 @@
+<h2 class="md-headline">{{editOrNew}} Sales Order</h2>
+<div layout="row">
+    <md-input-container class="margin-top-30" flex="10">
+        <label>Date</label>
+        <input type="date" ng-model="activeRecord.Preffix">
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex="35">
+        <label>S.O. NO.</label>
+        <input type="text" ng-model="activeRecord.FirstName">
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex="10">
+        <label>P.O. NO.</label>
+        <input type="text" ng-model="activeRecord.MiddleName">
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex="35">
+        <label>Sales REP.</label>
+        <md-select ng-model="activeRecord.SalesRepRef">
+            <md-option ng-repeat="employee in employees" ng-value="employee">
+                {{employee.Name}}
+            </md-option>
+        </md-select>
+    </md-input-container>
+
+    <md-input-container class="margin-top-30" flex="10">
+        <label>Suffix</label>
+        <input type="text" ng-model="activeRecord.Suffix">
+    </md-input-container>
+</div>
+<div layout="row">
+    <md-input-container class="margin-top-30" flex>
+        <label>Company Name</label>
+        <input type="text" ng-model="activeRecord.CompanyName">
+    </md-input-container>
+</div>
+<div layout="row">
+    <md-input-container class="margin-top-30" flex="20">
+        <label>Balance</label>
+        <input type="text" ng-model="activeRecord.Balance">
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex>
+        <label>Email</label>
+        <input type="text" ng-model="activeRecord.Email">
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex>
+        <label>Phone</label>
+        <input type="text" ng-model="activeRecord.Phone">
+    </md-input-container>
+</div>
