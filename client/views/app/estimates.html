@@ -14,7 +14,7 @@
             </md-input-container>
         </div>
         <div flex="30" layout="row" layout-align="end center">
-            <md-button ng-click="openNewRecord({})" class="md-accent md-raised">New</md-button>
+            <md-button ng-click="openNewRecord({syncToQB: true})" class="md-accent md-raised">New</md-button>
         </div>
     </div>
 </md-toolbar>
@@ -24,6 +24,7 @@
     <table ng-init="getRecords()" md-table md-progress="promise">
         <thead md-head md-order="query.order" md-on-reorder="getRecords">
         <tr md-row>
+            <th md-column md-order-by="RefNumber"><span>#</span></th>
             <th md-column md-order-by="CustomerRef.FullName" flex="30"><span>Customer</span></th>
             <th md-column flex>Sales REP</th>
             <th md-column flex>Total Amount</th>
@@ -32,12 +33,14 @@
         </thead>
         <tbody md-body>
         <tr md-row md-select-id="name" ng-repeat="record in records track by $index">
+            <td md-cell flex="30">{{record.RefNumber}}</td>
             <td md-cell flex="30">{{record.CustomerRef.FullName}}</td>
             <td md-cell flex>{{record.SalesRepRef.FullName}}</td>
             <td md-cell flex>{{record.TotalAmount}}</td>
             <td md-cell flex="10">
-                <md-button class="md-icon-button pull-right" ng-click="openEditRecord(record)" aria-label="Edit">
-                    <md-icon class="fa fa-pencil"></md-icon>
+                <md-button class="md-icon-button pull-right" ng-click="openEditRecord(record, 'estimate')" aria-label="Edit">
+                    <md-icon class="fa fa-edit"></md-icon>
+                    <md-tooltip>Edit</md-tooltip>
                 </md-button>
             </td>
         </tr>

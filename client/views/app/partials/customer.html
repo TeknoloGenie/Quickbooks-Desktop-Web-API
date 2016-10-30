@@ -1,44 +1,298 @@
-<h2 class="md-headline">{{editOrNew}} Customer</h2>
-<div layout="row">
-    <md-input-container class="margin-top-30" flex="10">
-        <label>Prefix</label>
-        <input type="text" ng-model="activeRecord.Preffix">
-    </md-input-container>
-    <md-input-container class="margin-top-30" flex="35">
-        <label>First Name</label>
-        <input type="text" ng-model="activeRecord.FirstName">
-    </md-input-container>
-    <md-input-container class="margin-top-30" flex="10">
-        <label>Middle Initial</label>
-        <input type="text" ng-model="activeRecord.MiddleName">
-    </md-input-container>
-    <md-input-container class="margin-top-30" flex="35">
-        <label>Last Name</label>
-        <input type="text" ng-model="activeRecord.LastName">
-    </md-input-container>
+<div class="container" ng-class="{'visible' : !record.$resolved}">
+    <md-progress-linear md-mode="query" ng-disabled="record.$resolved || !isSavingRecord"></md-progress-linear>
+</div>
+<div class="md-toolbar-tools">
+    <h2 class="md-headline" flex>{{record.ParentRef ? 'Job' : 'Customer'}}
+        <md-badge class="orange" ng-if="!record.EditSequence">
+            synchronizing
+            <md-tooltip>This record is still synchronizing back to QuickBooks. (Usually takes about 1 minute)</md-tooltip>
+        </md-badge>
+        <md-badge class="green" ng-if="record.EditSequence">
+            synchronized
+            <md-tooltip>This record has been synchronized back to QuickBooks.</md-tooltip>
+        </md-badge>
+    </h2>
+    <md-button class="pull-right" ng-if="prevState" ng-click="goBack()">
+        <md-icon class="fa fa-arrow-left margin-top-5"></md-icon>
+        Back
+    </md-button>
+</div>
 
-    <md-input-container class="margin-top-30" flex="10">
-        <label>Suffix</label>
-        <input type="text" ng-model="activeRecord.Suffix">
-    </md-input-container>
-</div>
-<div layout="row">
-    <md-input-container class="margin-top-30" flex>
-        <label>Company Name</label>
-        <input type="text" ng-model="activeRecord.CompanyName">
-    </md-input-container>
-</div>
-<div layout="row">
-    <md-input-container class="margin-top-30" flex="20">
-        <label>Balance</label>
-        <input type="text" ng-model="activeRecord.Balance">
-    </md-input-container>
-    <md-input-container class="margin-top-30" flex>
-        <label>Email</label>
-        <input type="text" ng-model="activeRecord.Email">
-    </md-input-container>
-    <md-input-container class="margin-top-30" flex>
-        <label>Phone</label>
-        <input type="text" ng-model="activeRecord.Phone">
-    </md-input-container>
+<md-content id="admin-panel-content-view" flex>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Details">
+            <br>
+            <br>
+            <div layout="row">
+                <md-input-container flex>
+                    <label>First</label>
+                    <input ng-disabled="record.ParentRef" type="text" ng-model="record.FirstName">
+                </md-input-container>
+                <md-input-container flex="10">
+                    <label>M.I.</label>
+                    <input ng-disabled="record.ParentRef" type="text" ng-model="record.MiddleName">
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Last</label>
+                    <input ng-disabled="record.ParentRef" type="text" ng-model="record.LastName">
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <md-input-container flex>
+                    <label>Company Name</label>
+                    <input ng-disabled="record.ParentRef" type="text" ng-model="record.CompanyName">
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Job Title</label>
+                    <input ng-disabled="record.ParentRef" type="text" ng-model="record.JobTitle">
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <md-input-container flex>
+                    <label>Main Email</label>
+                    <input type="text" ng-model="record.Email">
+                </md-input-container>
+                <md-input-container flex>
+                    <label>CC Email</label>
+                    <input type="text" ng-model="record.Cc">
+                </md-input-container>
+            </div>
+
+            <div layout="row">
+                <md-input-container flex>
+                    <label>Phone</label>
+                    <input type="text" ng-model="record.Phone">
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Alt Phone</label>
+                    <input type="text" ng-model="record.AltPhone">
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <md-input-container flex>
+                    <label>Fax</label>
+                    <input type="text" ng-model="record.Fax">
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Preferred Delivery Method</label>
+                    <md-select ng-model="record.PreferredDeliveryMethod">
+                        <md-option value="None">
+                            None
+                        </md-option>
+                        <md-option value="Email">
+                            Email
+                        </md-option>
+                        <md-option value="Fax">
+                            Fax
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+        </md-tab>
+        <md-tab label="Address">
+            <div layout="row">
+                <div layout="column" flex>
+                    <md-input-container flex="100">
+                        <label>Billing</label>
+                    <textarea ng-model="billAddressLines" rows="5" ng-trim="false"
+                              ng-list="&#10;"></textarea>
+                    </md-input-container>
+                    <md-input-container flex="100">
+                        <label>Note</label>
+                        <input type="text" ng-model="record.BillAddress.Note">
+                    </md-input-container>
+                </div>
+                <div layout="column" flex="10">
+                    <md-icon class="fa fa-arrow-right" ng-click="cloneAddress()"></md-icon>
+                </div>
+                <div layout="column" flex>
+                    <md-input-container flex="100">
+                        <label>Shipping</label>
+                    <textarea ng-model="shipAddressLines" rows="5" ng-trim="false"
+                              ng-list="&#10;"></textarea>
+                    </md-input-container>
+                    <md-input-container flex="100">
+                        <label>Note</label>
+                        <input type="text" ng-model="record.ShipAddress.Note">
+                    </md-input-container>
+                </div>
+            </div>
+        </md-tab>
+        <md-tab label="Jobs" ng-if="record.Sublevel == '0'">
+            <md-table-container class="margin-top-10" style="background: #F5F5F5">
+                <table md-table>
+                    <thead md-head>
+                    <tr md-row>
+                        <th md-column flex="25">Name</th>
+                        <th md-column flex="20">Type</th>
+                        <th md-column flex="10">Status</th>
+                        <th md-column flex="10">Dates</th>
+                        <th md-column flex="5"></th>
+                    </tr>
+                    </thead>
+                    <tbody md-body>
+                    <tr md-row md-select-id="name" ng-repeat="job in record.jobs track by $index" ng-class="{'orange': !job.EditSequence}">
+                        <td md-cell flex="25">{{job.Name}}</td>
+                        <td md-cell flex="20">{{job.JobTypeRef.FullName}}</td>
+                        <td md-cell flex="10">{{job.JobStatus}}</td>
+                        <td md-cell flex="20">
+                            {{job.JobStartDate ? job.JobStartDate + ' through ' + job.JobEndDate: 'no dates set'}}
+                        </td>
+                        <td md-cell flex="5">
+                            <md-button class="md-icon-button pull-right" ng-click="editCustomerJob(record, job)"
+                                       aria-label="Edit">
+                                <md-icon class="fa fa-edit"></md-icon>
+                            </md-button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+            <div layout="row" layout-align="end center">
+                <md-button ng-click="newJob(record)"
+                           class="md-primary md-link md-fab md-mini fa fa-plus"></md-button>
+            </div>
+        </md-tab>
+        <md-tab label="Job Info" ng-if="record.Sublevel !== '0'">
+            <div layout="row">
+                <md-input-container flex>
+                    <label>Name</label>
+                    <input type="text" ng-model="record.Name">
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Description</label>
+                    <input type="text" ng-model="record.JobDesc">
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <md-input-container flex>
+                    <label>Job Type</label>
+                    <md-select ng-model="record.JobTypeRef.FullName">
+                        <md-option ng-repeat="jobType in jobTypes" ng-value="jobType.FullName">
+                            {{jobType.FullName}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Job Status</label>
+                    <md-select ng-model="record.JobStatus">
+                        <md-option value="None">
+                            None
+                        </md-option>
+                        <md-option value="InProgress">
+                            In Progress
+                        </md-option>
+                        <md-option value="Awarded">
+                            Awarded
+                        </md-option>
+                        <md-option value="NotAwarded">
+                            Not Awarded
+                        </md-option>
+                        </md-option>
+                        <md-option value="Closed">
+                            Closed
+                        </md-option>
+                        <md-option value="Pending">
+                            Pending
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <lb-datepicker model="record.JobStartDate" label="Start Date"></lb-datepicker>
+                <lb-datepicker model="record.JobProjectedEndDate" label="Project End Date"></lb-datepicker>
+                <lb-datepicker model="record.JobEndDate" label="Deadline Date"></lb-datepicker>
+            </div>
+        </md-tab>
+        <md-tab label="Sales Orders" ng-if="record.Sublevel == '0'">
+            <md-table-container class="margin-top-10" style="background: #F5F5F5" flex>
+                <table md-table flex>
+                    <thead md-head flex>
+                    <tr md-row>
+                        <th md-column colspan="1">#</th>
+                        <th md-column colspan="1">Sales REP</th>
+                        <th md-column colspan="2" flex>Subtotal</th>
+                        <th md-column colspan="2" flex>Subtotal</th>
+                        <th md-column colspan="1"><span class="pull-right">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody md-body>
+                    <tr md-row md-select-id="name" ng-repeat="salesOrder in record.salesOrders track by $index">
+                        <td md-cell colspan="1" flex="30">{{salesOrder.RefNumber}}</td>
+                        <td md-cell colspan="1" flex>{{salesOrder.SalesRepRef.FullName}}</td>
+                        <td md-cell colspan="2" flex>{{salesOrder.Subtotal}}</td>
+                        <td md-cell flex="10">
+                            <a class="md-icon-button pull-right"
+                               ng-click="editCustomerSalesOrder(record, salesOrder)" aria-label="Edit">
+                                <md-icon class="fa fa-edit"></md-icon>
+                                <md-tooltip>Edit</md-tooltip>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+            <div layout="row" layout-align="end center">
+                <md-button ng-click="newSalesOrder(record)"
+                           class="md-primary md-link md-fab md-mini fa fa-plus"></md-button>
+            </div>
+        </md-tab>
+        <md-tab label="Estimates" ng-if="record.Sublevel == '0'">
+            <md-table-container class="margin-top-10" style="background: #f5f5f5" flex>
+                <table md-table flex>
+                    <thead md-head flex>
+                    <tr md-row>
+                        <th md-column flex>#</th>
+                        <th md-column flex>Sales REP</th>
+                        <th md-column flex>Total Amount</th>
+                        <th md-column flex="10"></th>
+                    </tr>
+                    </thead>
+                    <tbody md-body>
+                    <tr md-row md-select-id="name" ng-repeat="estimate in record.estimates track by $index">
+                        <td md-cell flex="30">{{estimate.RefNumber}}</td>
+                        <td md-cell flex>{{estimate.SalesRepRef.FullName}}</td>
+                        <td md-cell flex>{{estimate.TotalAmount}}</td>
+                        <td md-cell flex="10">
+                            <md-button class="md-icon-button pull-right"
+                                       ng-click="editCustomerEstimate(record, estimate)" aria-label="Edit">
+                                <md-icon class="fa fa-edit"></md-icon>
+                            </md-button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+            <div layout="row" layout-align="end center">
+                <md-button ng-click="newEstimate(record)"
+                           class="md-primary md-link md-fab md-mini fa fa-plus"></md-button>
+            </div>
+        </md-tab>
+        <md-tab label="Additional Info" ng-if="record.Sublevel == '0'">
+            <div layout="row">
+                <md-input-container flex>
+                    <label>Customer Type</label>
+                    <md-select ng-model="record.CustomerTypeRef">
+                        <md-option ng-repeat="type in customerTypes" ng-value="type">
+                            {{type.Name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Sales REP.</label>
+                    <md-select ng-model="record.SalesRepRef">
+                        <md-option ng-repeat="salesRep in salesReps" ng-value="salesRep">
+                            {{salesRep.Initial}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+        </md-tab>
+    </md-tabs>
+</md-content>
+
+<div class="pull-right">
+    <md-button class="md-warn md-warn md-raised" ng-click="goBack()" ng-if="record.Sublevel == '0'">cancel
+    </md-button>
+    <md-button class="md-primary md-raised" ng-disabled="isSavingRecord" ng-click="save()">save</md-button>
 </div>

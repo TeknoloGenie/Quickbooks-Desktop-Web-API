@@ -1,20 +1,16 @@
 <div layout="row" class="full-height">
     <!-- left sidebar -->
     <md-sidenav layout class="admin-sidebar-left md-sidenav-left md-whiteframe-z2" md-component-id="left"
-                md-is-locked-open="$mdMedia('gt-md')" ng-class="menuClass()"
+                md-is-locked-open="$mdMedia('gt-sm')" ng-class="menuClass()"
                 ng-mouseover="activateHover()" ng-mouseleave="removeHover()">
         <md-toolbar class="sidebar-left-toolbar">
             <div class="md-toolbar-tools" layout="row" layout-align="start center">
-
                 <div class="sidebar-left-logo">
                 </div>
-
-                <h2 flex class="sidebar-left-title">CNS Steel Sales App</h2>
-
+                <h2 flex class="sidebar-left-title">CNS Steel</h2>
                 <md-button class="md-icon-button sidebar-left-icon" ng-click="toggleMenuLock()"
                            aria-label="Open side menu">
-                    <md-icon md-font-icon
-                             ng-class="isMenuLocked == true ? 'fa fa-compress fa-rotate-90': 'fa fa-expand'"></md-icon>
+                    <md-icon ng-class="isMenuLocked == true ? 'fa fa-compress fa-rotate-90': 'fa fa-expand'"></md-icon>
                 </md-button>
 
             </div>
@@ -31,51 +27,26 @@
 
         <!-- top toolbar -->
 
-        <md-toolbar md-scroll-shrink="true" md-shrink-speed-factor="0.15">
+        <md-toolbar md-scroll-shrink="true" md-shrink-speed-factor="0.8">
             <div class="md-toolbar-tools">
-                <md-fab-speed-dial md-open="isFabOpen" md-direction="right" class="md-fling">
-                    <md-fab-trigger>
-                        <md-button aria-label="menu" class="md-fab md-warn fa fa-plus"></md-button>
-                    </md-fab-trigger>
-                    <md-fab-actions>
-                        <md-button aria-label="New Contact" class="md-fab md-raised md-mini fa fa-user-plus">
-                            <md-tooltip>New Customer</md-tooltip>
-                        </md-button>
-                        <md-button aria-label="New Estimate" class="md-fab md-raised md-mini fa fa-calculator">
-                            <md-tooltip>New Estimate</md-tooltip>
-                        </md-button>
-                        <md-button aria-label="New Sales Order" class="md-fab md-raised md-mini fa fa-credit-card">
-                            <md-tooltip>New Sales Order</md-tooltip>
-                        </md-button>
-                        <md-button aria-label="Queue System Update" class="md-fab md-raised md-mini fa fa-refresh">
-                            <md-tooltip>Queue System Update</md-tooltip>
-                        </md-button>
-                    </md-fab-actions>
-                </md-fab-speed-dial>
+
+                <md-button aria-label="menu" ng-class="{'fa-spin' : isSyncing}" class="md-fab md-mini md-warn fa fa-refresh"
+                           ng-click="reSync()"></md-button>
+
                 <md-button class="md-icon-button" hide-gt-md ng-click="openSideNav('left')"
                            aria-label="side navigation">
                     <md-icon md-font-icon="fa fa-bars"></md-icon>
                 </md-button>
 
-                <div flex layout="row" layout-align="end center">
-
-                    <md-button class="md-icon-button toolbar-button" aria-label="toggle notifications menu"
-                               ng-click="openSideNav('right')">
-                        <md-icon md-font-icon="fa fa-bell-o"></md-icon>
-                        <span class="toolbar-button-badge" theme-background="accent">{{notifications.length}}</span>
-                    </md-button>
-                </div>
-
-
                 <md-menu>
                     <md-button aria-label="Open user menu" ng-click="$mdOpenMenu()" aria-label="side navigation">
                         <img class="toolbar-user-avatar"
                              src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png">
-                        {{currentUser.firstName}} {{currentUser.lastName}}
+                        {{currentEmployee.FirstName}} {{currentEmployee.LastName}}
                     </md-button>
                     <md-menu-content width="3">
                         <md-menu-item>
-                            <md-button ng-disabled="true" ng-click="openReportIssue()" aria-label="side navigation">
+                            <md-button ng-click="openReportIssue()" aria-label="side navigation">
                                 <md-icon md-font-icon="fa fa-bug"></md-icon>
                                 <span>Report Issue</span>
                             </md-button>
@@ -93,26 +64,16 @@
 
         </md-toolbar>
 
-        <md-content class="dashboard-container" flex>
+        <md-content id="admin-panel-content-view" class="dashboard-container" flex>
             <!-- main view content  -->
             <div class="padded-content-page">
                 <h2 flex breadcrumbs="menu"></h2>
-                <div application-content ui-view class="margin-top-20"></div>
+                <div application-content id="app-content" ui-view class="margin-top-20"></div>
             </div>
 
         </md-content>
+
     </div>
-
-
-    <md-sidenav layout="column" layout-fill md-component-id="record" class="md-sidenav-right widen">
-        <form layout-margin="20" ng-include="getPartialPath()">
-
-        </form>
-        <div style="position: absolute; bottom: 0; background: #ffffff; width: 100%;">
-            <md-button class="md-accent md-warn md-raised pull-right" ng-click="closeRecord()">cancel</md-button>
-            <md-button class="md-primary md-raised pull-right" ng-click="saveRecord()">save</md-button>
-        </div>
-    </md-sidenav>
     <!-- right sidebar -->
     <md-sidenav layout layout-fill class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
         <md-content flex layout class="admin-notifications">
