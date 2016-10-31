@@ -1,6 +1,6 @@
 <md-toolbar class="md-table-toolbar" layout="row">
     <div class="md-toolbar-tools" layout>
-        <span flex="20" layout="row">Estimates</span>
+        <span flex="20" layout="row">Items</span>
         <div flex layout="row" layout-align="end center">
             <md-input-container>
                 <input ng-model="query.where[searchProperty].regexp" ng-change="getRecords()">
@@ -13,9 +13,6 @@
                 </md-select>
             </md-input-container>
         </div>
-        <div flex="30" layout="row" layout-align="end center">
-            <md-button ng-click="newRecord()" class="md-accent md-raised">New</md-button>
-        </div>
     </div>
 </md-toolbar>
 
@@ -24,25 +21,21 @@
     <table ng-init="getRecords()" md-table md-progress="promise">
         <thead md-head md-order="query.order" md-on-reorder="getRecords">
         <tr md-row>
-            <th md-column md-order-by="RefNumber"><span>#</span></th>
-            <th md-column md-order-by="CustomerRef.FullName" flex="30"><span>Customer</span></th>
-            <th md-column flex>Sales REP</th>
-            <th md-column flex>Total Amount</th>
+            <th md-column md-order-by="FullName" flex="30"><span>Name</span></th>
+            <th md-column md-order-by="ManufacturerPartNumber" flex>Item No.</th>
+            <th md-column md-order-by="ManufacturerPartNumber" flex>Price</th>
             <th md-column flex="10"><span class="pull-right">Actions</span></th>
         </tr>
         </thead>
         <tbody md-body>
-        <tr md-row md-select-id="name" ng-repeat="record in estimates track by $index"  ng-class="{'orange':!record.EditSequence}">
-            <md-tooltip ng-if="!record.EditSequence">Estimate is still syncing into QuickBooks</md-tooltip>
-            <td md-cell flex="30">{{record.RefNumber}}</td>
-            <td md-cell flex="30">{{record.CustomerRef.Name}}</td>
-            <td md-cell flex>{{record.SalesRepRef.Initial}}</td>
-            <td md-cell flex>{{record.TotalAmount}}</td>
+        <tr md-row md-select-id="name" ng-repeat="record in records track by $index">
+            <td md-cell flex="30">{{record.Name}}</td>
+            <td md-cell flex>{{record.ManufacturerPartNumber}}</td>
+            <td md-cell flex>{{record.SalesPrice}}</td>
             <td md-cell flex="10">
-                <a class="md-button md-icon-button md-button-link" ui-sref="root.app.estimate({id:record.id, TxnID: record.TxnID})" aria-label="Edit">
-                    <md-icon class="fa fa-edit"></md-icon>
-                    <md-tooltip>Edit</md-tooltip>
-                </a>
+                <md-button class="md-icon-button pull-right" ng-click="openEditRecord(record, 'item-inventory')" aria-label="Edit">
+                    <md-icon class="fa fa-eye"></md-icon>
+                </md-button>
             </td>
         </tr>
         </tbody>
