@@ -19,10 +19,11 @@
                 <md-tooltip>This record has been synchronized back to QuickBooks.</md-tooltip>
             </md-badge>
         </h2>
-        <md-button class="pull-right" ng-if="prevState" ng-click="goBack()">
+        <h4 class="md-subheader">{{customer.FullName}}</h4>
+        <a class="md-button md-button-link pull-right" ng-if="customer.ParentRef" ui-sref="root.app.customer({ListID:customer.ParentRef.ListID})">
             <md-icon class="fa fa-arrow-left margin-top-5"></md-icon>
-            Back
-        </md-button>
+            Back to {{customer.ParentRef.FullName}}
+        </a>
     </div>
 
     <md-content id="admin-panel-content-view" flex>
@@ -125,7 +126,7 @@
                     </div>
                 </div>
             </md-tab>
-            <md-tab label="Jobs" ng-if="!customer.Sublevel || customer.Sublevel == '0'">
+            <md-tab label="Jobs" ng-if="!customer.ParentRef">
                 <md-table-container class="margin-top-10" style="background: #F5F5F5">
                     <table md-table>
                         <thead md-head>
@@ -147,10 +148,10 @@
                                 {{job.JobStartDate ? job.JobStartDate + ' through ' + job.JobEndDate: 'no dates set'}}
                             </td>
                             <td md-cell flex="5">
-                                <md-button class="md-icon-button pull-right" ng-click="editCustomerJob(customer, job)"
+                                <a class="md-button md-icon-button pull-right" ui-sref="root.app.customer({id:job.id, ListID: job.ListID})"
                                            aria-label="Edit">
                                     <md-icon class="fa fa-edit"></md-icon>
-                                </md-button>
+                                </a>
                             </td>
                         </tr>
                         </tbody>
@@ -161,7 +162,7 @@
                                class="md-primary md-link md-fab md-mini fa fa-plus"></md-button>
                 </div>
             </md-tab>
-            <md-tab label="Job Info" ng-if="customer.Sublevel > '0'">
+            <md-tab label="Job Info" ng-if="customer.ParentRef">
                 <div layout="row">
                     <md-input-container flex>
                         <label>Name</label>
@@ -212,28 +213,26 @@
                     <lb-datepicker model="customer.JobEndDate" label="Deadline Date"></lb-datepicker>
                 </div>
             </md-tab>
-            <md-tab label="Sales Orders" ng-if="!customer.Sublevel || customer.Sublevel == '0'">
+            <md-tab label="Sales Orders">
                 <md-table-container class="margin-top-10" style="background: #F5F5F5" flex>
                     <table md-table flex>
                         <thead md-head flex>
                         <tr md-row>
                             <th md-column colspan="1">#</th>
-                            <th md-column colspan="1">Sales REP</th>
-                            <th md-column colspan="2" flex>Subtotal</th>
-                            <th md-column colspan="2" flex>Subtotal</th>
+                            <th md-column colspan="2">Sales REP</th>
+                            <th md-column colspan="4" flex>Subtotal</th>
                             <th md-column colspan="1"><span class="pull-right">Actions</span></th>
                         </tr>
                         </thead>
                         <tbody md-body>
                         <tr md-row md-select-id="name" ng-repeat="salesOrder in customer.salesOrders track by $index">
-                            <td md-cell colspan="1" flex="30">{{salesOrder.RefNumber}}</td>
-                            <td md-cell colspan="1" flex>{{salesOrder.SalesRepRef.FullName}}</td>
-                            <td md-cell colspan="2" flex>{{salesOrder.Subtotal}}</td>
-                            <td md-cell flex="10">
-                                <a class="md-icon-button pull-right"
-                                   ng-click="editCustomerSalesOrder(customer, salesOrder)" aria-label="Edit">
+                            <td md-cell colspan="1">{{salesOrder.RefNumber}}</td>
+                            <td md-cell colspan="2">{{salesOrder.SalesRepRef.Initial}}</td>
+                            <td md-cell colspan="4">{{salesOrder.TotalAmount}}</td>
+                            <td md-cell colspan="1">
+                                <a class="md-button md-icon-button pull-right" ui-sref="root.app.salesOrder({id:salesOrder.id, TxnID: salesOrder.TxnID})"
+                                   aria-label="Edit">
                                     <md-icon class="fa fa-edit"></md-icon>
-                                    <md-tooltip>Edit</md-tooltip>
                                 </a>
                             </td>
                         </tr>
@@ -245,7 +244,7 @@
                                class="md-primary md-link md-fab md-mini fa fa-plus"></md-button>
                 </div>
             </md-tab>
-            <md-tab label="Estimates" ng-if="!customer.Sublevel || customer.Sublevel == '0'">
+            <md-tab label="Estimates">
                 <md-table-container class="margin-top-10" style="background: #f5f5f5" flex>
                     <table md-table flex>
                         <thead md-head flex>
@@ -259,13 +258,13 @@
                         <tbody md-body>
                         <tr md-row md-select-id="name" ng-repeat="estimate in customer.estimates track by $index">
                             <td md-cell flex="30">{{estimate.RefNumber}}</td>
-                            <td md-cell flex>{{estimate.SalesRepRef.FullName}}</td>
+                            <td md-cell flex>{{estimate.SalesRepRef.Initial}}</td>
                             <td md-cell flex>{{estimate.TotalAmount}}</td>
                             <td md-cell flex="10">
-                                <md-button class="md-icon-button pull-right"
-                                           ng-click="editCustomerEstimate(customer, estimate)" aria-label="Edit">
+                                <a class="md-button md-icon-button pull-right" ui-sref="root.app.estimate({id:estimate.id, TxnID: estimate.TxnID})"
+                                   aria-label="Edit">
                                     <md-icon class="fa fa-edit"></md-icon>
-                                </md-button>
+                                </a>
                             </td>
                         </tr>
                         </tbody>
@@ -276,7 +275,7 @@
                                class="md-primary md-link md-fab md-mini fa fa-plus"></md-button>
                 </div>
             </md-tab>
-            <md-tab label="Additional Info" ng-if="!customer.Sublevel || customer.Sublevel == '0'">
+            <md-tab label="Additional Info" ng-if="!customer.ParentRef">
                 <div layout="row">
                     <md-input-container flex>
                         <label>Customer Type</label>
@@ -288,8 +287,8 @@
                     </md-input-container>
                     <md-input-container flex>
                         <label>Sales REP.</label>
-                        <md-select ng-model="customer.SalesRepRef">
-                            <md-option ng-repeat="salesRep in salesReps" ng-value="salesRep">
+                        <md-select ng-model="customer.SalesRepRef.ListID">
+                            <md-option ng-repeat="salesRep in salesReps" ng-value="salesRep.ListID">
                                 {{salesRep.Initial}}
                             </md-option>
                         </md-select>
@@ -299,10 +298,7 @@
         </md-tabs>
     </md-content>
     <div class="pull-right">
-
-        <a class="md-button md-button-link md-warn" ui-sref="root.app.customers"
-           ng-if="!customer.Sublevel || customer.Sublevel <= '0'">cancel
-        </a>
+        <a class="md-button md-button-link md-warn" ui-sref="root.app.customers">cancel</a>
         <md-button class="md-primary md-raised" ng-disabled="isSavingRecord" ng-click="save(customer)">save</md-button>
     </div>
 </div>

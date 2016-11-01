@@ -32,7 +32,6 @@
         </thead>
         <tbody md-body>
         <tr md-row md-select-id="name" ng-repeat="record in customers track by $index" ng-class="{'orange':!record.EditSequence}">
-            <md-tooltip ng-if="!record.EditSequence">Customer is still syncing into QuickBooks</md-tooltip>
             <td md-cell colspan="5">{{record.Name}}</td>
             <td md-cell colspan="4">{{record.Email}}</td>
             <td md-cell colspan="2">{{record.CompanyName}}</td>
