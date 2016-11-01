@@ -1,12 +1,17 @@
-<div class="container" ng-class="{'visible' : !record.$resolved}">
-    <md-progress-linear md-mode="query" ng-disabled="record.$resolved || !isSavingRecord"></md-progress-linear>
+<div class="container" ng-class="{'visible' : !records.$resolved}">
+    <md-progress-linear md-mode="query" ng-disabled="records.$resolved || !isSavingRecord"></md-progress-linear>
 </div>
-<div ng-repeat="customer in record">
+<div ng-repeat="customer in records" ng-controller="CustomerController">
     <div class="md-toolbar-tools">
         <h2 class="md-headline" flex>{{customer.ParentRef ? 'Job' : 'Customer'}}
             <md-badge class="orange" ng-if="!customer.EditSequence">
                 synchronizing
                 <md-tooltip>This record is still synchronizing back to QuickBooks. (Usually takes about 1 minute)
+                </md-tooltip>
+            </md-badge>
+            <md-badge class="blue" ng-if="customer.resynchronizing">
+                resynchronizing
+                <md-tooltip>This record is being resynchronized with QuickBooks. (Usually takes about 1 minute)
                 </md-tooltip>
             </md-badge>
             <md-badge class="green" ng-if="customer.EditSequence">
@@ -142,7 +147,7 @@
                                 {{job.JobStartDate ? job.JobStartDate + ' through ' + job.JobEndDate: 'no dates set'}}
                             </td>
                             <td md-cell flex="5">
-                                <md-button class="md-icon-button pull-right" ng-click="editCustomerJob(record, job)"
+                                <md-button class="md-icon-button pull-right" ng-click="editCustomerJob(customer, job)"
                                            aria-label="Edit">
                                     <md-icon class="fa fa-edit"></md-icon>
                                 </md-button>
@@ -152,7 +157,7 @@
                     </table>
                 </md-table-container>
                 <div layout="row" layout-align="end center">
-                    <md-button ng-click="newJob(record)"
+                    <md-button ng-click="newJob(customer)"
                                class="md-primary md-link md-fab md-mini fa fa-plus"></md-button>
                 </div>
             </md-tab>
@@ -226,7 +231,7 @@
                             <td md-cell colspan="2" flex>{{salesOrder.Subtotal}}</td>
                             <td md-cell flex="10">
                                 <a class="md-icon-button pull-right"
-                                   ng-click="editCustomerSalesOrder(record, salesOrder)" aria-label="Edit">
+                                   ng-click="editCustomerSalesOrder(customer, salesOrder)" aria-label="Edit">
                                     <md-icon class="fa fa-edit"></md-icon>
                                     <md-tooltip>Edit</md-tooltip>
                                 </a>
@@ -236,7 +241,7 @@
                     </table>
                 </md-table-container>
                 <div layout="row" layout-align="end center">
-                    <md-button ng-click="newSalesOrder(record)"
+                    <md-button ng-click="newSalesOrder(customer)"
                                class="md-primary md-link md-fab md-mini fa fa-plus"></md-button>
                 </div>
             </md-tab>
@@ -258,7 +263,7 @@
                             <td md-cell flex>{{estimate.TotalAmount}}</td>
                             <td md-cell flex="10">
                                 <md-button class="md-icon-button pull-right"
-                                           ng-click="editCustomerEstimate(record, estimate)" aria-label="Edit">
+                                           ng-click="editCustomerEstimate(customer, estimate)" aria-label="Edit">
                                     <md-icon class="fa fa-edit"></md-icon>
                                 </md-button>
                             </td>
@@ -267,7 +272,7 @@
                     </table>
                 </md-table-container>
                 <div layout="row" layout-align="end center">
-                    <md-button ng-click="newEstimate(record)"
+                    <md-button ng-click="newEstimate(customer)"
                                class="md-primary md-link md-fab md-mini fa fa-plus"></md-button>
                 </div>
             </md-tab>
