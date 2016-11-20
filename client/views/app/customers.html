@@ -1,0 +1,85 @@
+<md-toolbar class="md-table-toolbar" layout="row">
+    <div class="md-toolbar-tools" layout>
+        <span flex="20" layout="row">Customers</span>
+        <div flex layout="row" layout-align="end center">
+            <md-input-container>
+                <input ng-model="query.where[searchProperty].regexp" ng-change="getRecords()">
+            </md-input-container>
+            <md-input-container>
+                <md-select ng-model="searchProperty">
+                    <md-option ng-repeat="property in searchProperties" value="{{property}}" ng-disabled="$index === 1">
+                        {{property}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+        <div flex="30" layout="row" layout-align="end center">
+            <md-button ng-click="newRecord()" class="md-accent md-raised">New</md-button>
+        </div>
+    </div>
+</md-toolbar>
+
+<!-- exact table from live demo -->
+<md-table-container>
+    <table ng-init="getRecords()" md-table md-progress="customers">
+        <thead md-head md-order="query.order" md-on-reorder="getRecords">
+        <tr md-row>
+            <th md-column md-order-by="Name" colspan="5"><span>Name</span></th>
+            <th md-column md-order-by="Email" colspan="4">Email</th>
+            <th md-column md-order-by="CompanyName" colspan="2">Company</th>
+            <th md-column colspan="1"><span class="pull-right">Actions</span></th>
+        </tr>
+        </thead>
+        <tbody md-body>
+        <tr md-row md-select-id="name" ng-repeat="record in customers track by $index" ng-class="{'orange':!record.EditSequence}">
+            <td md-cell colspan="5">{{record.Name}}</td>
+            <td md-cell colspan="4">{{record.Email}}</td>
+            <td md-cell colspan="2">{{record.CompanyName}}</td>
+            <td md-cell colspan="1">
+                <a class="md-button md-icon-button md-button-link" ui-sref="root.app.customer({id:record.id, ListID: record.ListID})" aria-label="Edit">
+                    <md-icon class="fa fa-edit"></md-icon>
+                    <md-tooltip>Edit</md-tooltip>
+                </a>
+                <md-menu>
+                    <md-button aria-label="Open add new" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                        <md-icon class="fa fa-plus"></md-icon>
+                    </md-button>
+                    <md-menu-content>
+                        <md-menu-item>
+                            <md-button ng-click="newJob(record)">
+                                <md-icon class="fa fa-briefcase"></md-icon>
+                                Job
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-divider></md-menu-divider>
+                        <md-menu-item>
+                            <md-button ng-click="newEstimate(record)">
+                                <md-icon class="fa fa-tag"></md-icon>
+                                Estimate
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="newSalesOrder(record)">
+                                <md-icon class="fa fa-tags"></md-icon>
+                                Sales Order
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+                <md-button class="md-icon-button" aria-label="Overview">
+                    <md-icon class="fa fa-eye"></md-icon>
+                    <md-tooltip>
+                        <strong>Balance: </strong> <span class="pull-right">${{record.Balance ? record.Balance : '0.00'}}</span>
+                        <br>
+                        <strong>Credit Limit: </strong><span class="pull-right">${{record.Credit ? record.Credit : '0.00'}}</span>
+                        <br>
+                    </md-tooltip>
+                </md-button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</md-table-container>
+
+<md-table-pagination md-limit="query.limit" md-limit-options="limitOptions" md-page="query.page"
+                     md-total="{{totalRecords.count}}" md-on-paginate="getRecords" md-page-select></md-table-pagination>

@@ -1,0 +1,16 @@
+<h2 class="md-headline">View Item</h2>
+Details
+<div layout="row">
+    <md-input-container class="margin-top-30" flex>
+        <label>Name</label>
+        <input type="text" ng-model="activeRecord.Name" disabled>
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex="25">
+        <label>Item No.</label>
+        <input type="text" ng-model="activeRecord.ManufacturerPartNumber" disabled>
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex>
+        <label>Price</label>
+        <input type="text" disabled ng-model="activeRecord.SalesOrPurchase.Price">
+    </md-input-container>
+</div>

@@ -1,0 +1,104 @@
+<div layout="row" class="full-height">
+    <!-- left sidebar -->
+    <md-sidenav layout class="admin-sidebar-left md-sidenav-left md-whiteframe-z2" md-component-id="left"
+                md-is-locked-open="$mdMedia('gt-sm')" ng-class="menuClass()"
+                ng-mouseover="activateHover()" ng-mouseleave="removeHover()">
+        <md-toolbar class="sidebar-left-toolbar">
+            <div class="md-toolbar-tools" layout="row" layout-align="start center">
+                <div class="sidebar-left-logo">
+                </div>
+                <h2 flex class="sidebar-left-title">CNS Steel</h2>
+                <md-button class="md-icon-button sidebar-left-icon" ng-click="toggleMenuLock()"
+                           aria-label="Open side menu">
+                    <md-icon ng-class="isMenuLocked == true ? 'fa fa-compress fa-rotate-90': 'fa fa-expand'"></md-icon>
+                </md-button>
+
+            </div>
+            <side-menu menu="menu" flex></side-menu>
+        </md-toolbar>
+
+    </md-sidenav>
+
+    <!-- main content -->
+    <div id="admin-panel" layout="column"
+         style="border-color: rgb(58, 58, 58); color: rgba(255, 255, 255, 0.870588); background-color: rgb(217, 217, 217);"
+         flex>
+        <!-- loading animation -->
+
+        <!-- top toolbar -->
+
+        <md-toolbar md-scroll-shrink="true" md-shrink-speed-factor="0.8">
+            <div class="md-toolbar-tools">
+
+                <md-button aria-label="menu" ng-class="{'fa-spin' : isSyncing}" class="md-fab md-mini md-warn fa fa-refresh"
+                           ng-click="reSync()"></md-button>
+
+                <md-button class="md-icon-button" hide-gt-md ng-click="openSideNav('left')"
+                           aria-label="side navigation">
+                    <md-icon md-font-icon="fa fa-bars"></md-icon>
+                </md-button>
+
+                <md-menu>
+                    <md-button aria-label="Open user menu" ng-click="$mdOpenMenu()" aria-label="side navigation">
+                        <img class="toolbar-user-avatar"
+                             src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png">
+                        {{currentEmployee.FirstName}} {{currentEmployee.LastName}}
+                    </md-button>
+                    <md-menu-content width="3">
+                        <md-menu-item>
+                            <md-button ng-click="openReportIssue()" aria-label="side navigation">
+                                <md-icon md-font-icon="fa fa-bug"></md-icon>
+                                <span>Report Issue</span>
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-divider></md-menu-divider>
+                        <md-menu-item>
+                            <md-button ng-click="logout()" aria-label="side navigation">
+                                <md-icon md-font-icon="fa fa-sign-out"></md-icon>
+                                <span>Logout</span>
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+            </div>
+
+        </md-toolbar>
+
+        <md-content id="admin-panel-content-view" class="dashboard-container" flex>
+            <!-- main view content  -->
+            <div class="padded-content-page">
+                <h2 flex breadcrumbs="menu"></h2>
+                <div application-content id="app-content" ui-view class="margin-top-20"></div>
+            </div>
+
+        </md-content>
+
+    </div>
+    <!-- right sidebar -->
+    <md-sidenav layout layout-fill class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+        <md-content flex layout class="admin-notifications">
+            <md-tabs flex md-stretch-tabs="always" md-selected="notificationsTab">
+                <md-tab>
+                    <md-tab-label>
+                        <md-icon md-font-icon="fa fa-bell-o"></md-icon>
+                    </md-tab-label>
+                    <md-tab-body>
+                        <md-content>
+                            <md-list>
+                                <md-list-item ng-repeat="notification in notifications" layout="row"
+                                              ng-show="notification.unread" layout-align="space-between center"
+                                              ng-click="readNotification(notification)">
+                                    <md-icon md-font-icon="{{notification.icon}}"
+                                             ng-style="{ color: notification.iconColor }"></md-icon>
+                                    <p>{{notification.controller}} - {{notification.subject}}</p>
+                                    <span class="md-caption" am-time-ago="notification.createdAt"></span>
+                                </md-list-item>
+                            </md-list>
+                        </md-content>
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+        </md-content>
+
+    </md-sidenav>
+</div>

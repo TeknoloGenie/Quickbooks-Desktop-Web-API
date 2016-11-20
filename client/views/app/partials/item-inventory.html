@@ -1,0 +1,38 @@
+<h2 class="md-headline">View Item</h2>
+Details
+<div layout="row">
+    <md-input-container class="margin-top-30" flex>
+        <label>Name</label>
+        <input type="text" ng-model="activeRecord.Name" disabled>
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex="25">
+        <label>Item No.</label>
+        <input type="text" ng-model="activeRecord.ManufacturerPartNumber" disabled>
+    </md-input-container>
+    </div>
+Pricing
+<div layout="row">
+    <md-input-container class="margin-top-30" flex>
+        <label>Sales Price</label>
+        <input type="text" disabled ng-model="activeRecord.SalesPrice">
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex>
+        <label>Purchase Cost</label>
+        <input type="text" disabled ng-model="activeRecord.PurchaseCost">
+    </md-input-container>
+</div>
+Quantity
+<div layout="row">
+    <md-input-container class="margin-top-30" flex>
+        <label>Quantity On Hand</label>
+        <input type="text" disabled ng-model="activeRecord.QuantityOnHand">
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex>
+        <label>Quantity On Order</label>
+        <input type="text" disabled ng-model="activeRecord.QuantityOnOrder">
+    </md-input-container>
+    <md-input-container class="margin-top-30" flex>
+        <label>Quantity On Sales Order</label>
+        <input type="text" disabled ng-model="activeRecord.QuantityOnSalesOrder">
+    </md-input-container>
+</div>

@@ -1,0 +1,165 @@
+<div class="container" ng-class="{'visible' : !record.$resolved}">
+    <md-progress-linear md-mode="query" ng-disabled="record.$resolved || !isSavingRecord"></md-progress-linear>
+</div>
+<div ng-repeat="estimate in record" ng-controller="EstimateController">
+    <div class="md-toolbar-tools">
+        <h2 class="md-headline" flex>{{editOrNew}} Estimate
+            <md-badge class="orange" ng-if="!estimate.EditSequence">
+                synchronizing
+                <md-tooltip>This record is still synchronizing back to QuickBooks. (Usually takes about 1 minute)
+                </md-tooltip>
+            </md-badge>
+            <md-badge class="green" ng-if="estimate.EditSequence">
+                synchronized
+                <md-tooltip>This record has been synchronized back to QuickBooks.</md-tooltip>
+            </md-badge>
+        </h2>
+        <md-button class="pull-right" ng-if="prevState" ng-click="goBack()">
+            <md-icon class="fa fa-arrow-left margin-top-5"></md-icon>
+            Back
+        </md-button>
+        <md-button class="pull-right md-raised md-accent" ng-if="prevState" ng-click="convertToSalesOrder(estimate)">
+            <md-icon class="fa fa-balance-scale margin-top-5"></md-icon>
+            Convert To Sales Order
+        </md-button>
+    </div>
+
+    <md-divider></md-divider>
+    <div layout="row">
+        <md-input-container flex="40">
+            <label>Customer : Job</label>
+            <md-select ng-model="estimate.CustomerRef.ListID">
+                <md-option ng-repeat="customer in customersAndJobs" ng-value="customer.ListID">
+                    {{customer.Name}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container flex="15">
+            <label>Sales Rep</label>
+            <md-select ng-model="estimate.SalesRepRef.ListID">
+                <md-option ng-repeat="salesRep in salesReps" ng-value="salesRep.ListID">
+                    {{salesRep.Initial}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <lb-datepicker model="estimate.DueDate" label="Date"></lb-datepicker>
+        <md-input-container flex="5">
+            <label>Ref #</label>
+            <input type="text" ng-model="estimate.RefNumber">
+        </md-input-container>
+    </div>
+    <div layout="row">
+        <md-input-container flex="30">
+            <label>Billing</label>
+            <textarea ng-model="estimate.billAddressLines" rows="5" ng-trim="false" ng-list="&#10;"></textarea>
+        </md-input-container>
+
+
+        <md-input-container flex="30">
+            <label>Shipping</label>
+            <textarea ng-model="estimate.shipAddressLines" rows="5" ng-trim="false" ng-list="&#10;"></textarea>
+        </md-input-container>
+    </div>
+
+    <md-table-container class="margin-top-10" style="background: #F5F5F5" flex>
+        <table md-table flex>
+            <thead md-head flex>
+            <tr md-row flex>
+                <th md-column></th>
+                <th md-column flex="30">Name</th>
+                <th md-column flex>Description</th>
+                <th md-column flex="5">QTY</th>
+                <th md-column flex="15">UM</th>
+                <th md-column flex="5">Rate</th>
+                <th md-column flex="10"><span>Total</span></th>
+            </tr>
+            </thead>
+            <tbody md-body>
+            <tr md-row md-select-id="name" ng-repeat="record in estimate.EstimateLineMod track by $index"
+                ng-controller="EstimateLineItemController">
+                <td md-cell>
+                    <md-icon ng-click="removeLineItem($index)" class="fa fa-trash"></md-icon>
+                </td>
+                <td md-cell flex="30">
+                    <md-autocomplete
+                            md-selected-item="record.ItemRef.ListID"
+                            md-search-text-change="searchItemChange(searchItemText)"
+                            md-search-text="searchItemText"
+                            md-items="item in itemQuerySearch(searchItemText)"
+                            md-selected-item-change="estimateLineItemChanged(item, $index)"
+                            md-item-text="item.FullName"
+                            md-min-length="0"
+                            placeholder="Start typing item name"
+                            md-floating-label="Item">
+                        <md-item-template>
+                            <span md-highlight-text="searchItemText" md-highlight-flags="^i">{{item.FullName}}</span>
+                        </md-item-template>
+                        <md-not-found>
+                            No items matching "{{searchItemText}}" were found.
+                        </md-not-found>
+                    </md-autocomplete>
+                </td>
+                <td md-cell flex>
+                    <md-input-container>
+                        <label>Description</label>
+                        <input type="text" ng-model="record.Desc">
+                    </md-input-container>
+                </td>
+                <td md-cell flex="5">
+                    <md-input-container>
+                        <label>Quantity</label>
+                        <input type="text" ng-model="record.Quantity">
+                    </md-input-container>
+                </td>
+                <td md-cell flex="10">{{record.UnitOfMeasure}}</td>
+                <td md-cell flex="5">
+                    <md-input-container>
+                        <label>Rate</label>
+                        <input type="text" ng-model="record.Rate">
+                    </md-input-container>
+                </td>
+                <td md-cell flex="10">{{record.Amount}}</td>
+            </tr>
+            </tbody>
+            <tfoot md-foot>
+            <tr md-row flex>
+                <td md-cell colspan="6"></td>
+                <td md-cell><strong>Total: {{estimate.Subtotal | number:2}}</strong>
+                    <md-input-container flex="15">
+                        <label>Sales Tax</label>
+                        <md-select ng-model="estimate.ItemSalesTaxRef.ListID">
+                            <md-option ng-repeat="salesTax in salesTaxCodes" ng-value="salesTax.ListID">
+                                {{salesTax.Name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </md-table-container>
+    <div flex layout="row" layout-align="end center">
+        <md-button ng-click="addNewLineItem()" class="md-primary md-link md-fab md-mini fa fa-plus"></md-button>
+    </div>
+    <div layout="row">
+        <md-input-container flex="25">
+            <label>Customer Message</label>
+            <md-select ng-model="estimate.CustomerMsgRef.ListID">
+                <md-option ng-repeat="customerMsg in customerMessages" ng-value="customerMsg.ListID">
+                    {{customerMsg.Name}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+    </div>
+    <div layout="row">
+        <md-input-container flex="30">
+            <label>Memo</label>
+            <input type="text" ng-model="estimate.Memo">
+        </md-input-container>
+    </div>
+
+    <div class="pull-right">
+        <a class="md-button md-button-link md-warn" ui-sref="root.app.estimates">cancel</a>
+        <md-button class="md-primary md-raised" ng-disabled="isSavingRecord" ng-click="save(estimate)">save</md-button>
+    </div>
+</div>
