@@ -1,3 +1,3 @@
 ## Client
 
-This is the place for your application front-end files.
+Private repo, readme will come when it becomes public.
